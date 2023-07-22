@@ -86,8 +86,8 @@ async function run() {
 
     // Get all colleges
     app.get("/colleges", async (req, res) => {
-      const page = req.query.page || 1;
-      const limit = req.query.limit || 9;
+      const page = req.query.page;
+      const limit = req.query.limit;
       const skip = (page - 1) * limit;
       const colleges = await collegeCollection
         .find({})
