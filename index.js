@@ -84,6 +84,19 @@ async function run() {
       }
     });
 
+    // Get all colleges
+    app.get("/colleges", async (req, res) => {
+      const page = req.query.page || 1;
+      const limit = req.query.limit || 9;
+      const skip = (page - 1) * limit;
+      const colleges = await collegeCollection
+        .find({})
+        .skip(skip)
+        .limit(parseInt(limit))
+        .toArray();
+      res.json(colleges);
+    });
+
     // Get popular colleges according to the average rating
 
     app.get("/popularcolleges", async (req, res) => {
