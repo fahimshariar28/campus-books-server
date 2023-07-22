@@ -51,6 +51,9 @@ async function run() {
     const collegeCollection = client
       .db("campus-books-collection")
       .collection("colleges");
+    const graduateCollection = client
+      .db("campus-books-collection")
+      .collection("graduate");
     const userCollection = client
       .db("campus-books-collection")
       .collection("users");
@@ -97,6 +100,12 @@ async function run() {
       );
 
       res.json(collegesWithAverageRating);
+    });
+
+    // Get Graduates
+    app.get("/graduates", async (req, res) => {
+      const graduates = await graduateCollection.find({}).toArray();
+      res.json(graduates);
     });
 
     // Send a ping to confirm a successful connection
