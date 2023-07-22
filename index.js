@@ -117,6 +117,23 @@ async function run() {
       res.json(research);
     });
 
+    // Get all reviews of all colleges
+    app.get("/reviews", async (req, res) => {
+      const colleges = await collegeCollection.find({}).toArray();
+      const reviewsWithCollegeName = colleges.reduce((allReviews, college) => {
+        const collegeReviews = college.reviews.map((review) => {
+          return {
+            college_name: college.college_name,
+            reviewer_name: review.reviewer_name,
+            rating: review.rating,
+            review_text: review.review_text,
+          };
+        });
+        return [...allReviews, ...collegeReviews];
+      }, []);
+      res.json(reviewsWithCollegeName);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
