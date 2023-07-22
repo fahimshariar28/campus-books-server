@@ -78,6 +78,27 @@ async function run() {
       }
     });
 
+    // Get popular colleges according to the average rating
+
+    app.get("/popularcolleges", async (req, res) => {
+      const colleges = await collegeCollection.find({}).toArray();
+
+      // Calculate the average rating for each college
+      const collegesWithAverageRating = colleges.slice(0, 3).map((college) => {
+        const totalRating = college.reviews.reduce(
+          (sum, review) => sum + review.rating,
+          0
+        );
+        const averageRating = totalRating / college.reviews.length;
+        return { ...college, averageRating };
+      });
+      collegesWithAverageRating.sort(
+        (a, b) => b.averageRating - a.averageRating
+      );
+
+      res.json(collegesWithAverageRating);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
