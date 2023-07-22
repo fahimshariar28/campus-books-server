@@ -57,6 +57,9 @@ async function run() {
     const userCollection = client
       .db("campus-books-collection")
       .collection("users");
+    const researchCollection = client
+      .db("campus-books-collection")
+      .collection("research");
 
     // Jwt Token
     app.post("/jwt", (req, res) => {
@@ -106,6 +109,12 @@ async function run() {
     app.get("/graduates", async (req, res) => {
       const graduates = await graduateCollection.find({}).toArray();
       res.json(graduates);
+    });
+
+    // Get Research
+    app.get("/research", async (req, res) => {
+      const research = await researchCollection.find({}).toArray();
+      res.json(research);
     });
 
     // Send a ping to confirm a successful connection
