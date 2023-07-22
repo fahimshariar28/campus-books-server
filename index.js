@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -101,6 +101,14 @@ async function run() {
     app.get("/colleges/total", async (req, res) => {
       const total = await collegeCollection.countDocuments({});
       res.json(total);
+    });
+
+    // Get College by ID
+    app.get("/college/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const college = await collegeCollection.findOne(query);
+      res.json(college);
     });
 
     // Get popular colleges according to the average rating
