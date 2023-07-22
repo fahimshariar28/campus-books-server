@@ -97,6 +97,12 @@ async function run() {
       res.json(colleges);
     });
 
+    // Get total number of colleges
+    app.get("/colleges/total", async (req, res) => {
+      const total = await collegeCollection.countDocuments({});
+      res.json(total);
+    });
+
     // Get popular colleges according to the average rating
 
     app.get("/popularcolleges", async (req, res) => {
