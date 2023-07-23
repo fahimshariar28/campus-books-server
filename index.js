@@ -191,6 +191,18 @@ async function run() {
       res.json(reviewsWithCollegeName);
     });
 
+    // Add review to a college
+    app.patch("/review/:id", async (req, res) => {
+      const id = req.params.id;
+      const review = req.body;
+      const query = { _id: new ObjectId(id) };
+      const college = await collegeCollection.findOne(query);
+      const reviews = [...college.reviews, review];
+      const update = { $set: { reviews } };
+      const result = await collegeCollection.updateOne(query, update);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
