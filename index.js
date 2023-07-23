@@ -114,6 +114,14 @@ async function run() {
       res.json(college);
     });
 
+    // Get College by name (search)
+    app.get("/colleges/search/:name", async (req, res) => {
+      const name = req.params.name;
+      const query = { college_name: { $regex: name, $options: "i" } };
+      const colleges = await collegeCollection.find(query).toArray();
+      res.json(colleges);
+    });
+
     // Get popular colleges according to the average rating
 
     app.get("/popularcolleges", async (req, res) => {
