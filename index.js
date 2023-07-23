@@ -97,7 +97,15 @@ async function run() {
         .skip(skip)
         .limit(parseInt(limit))
         .toArray();
-      res.json(colleges);
+      const collegesWithAverageRating = colleges.map((college) => {
+        const totalRating = college.reviews.reduce(
+          (sum, review) => sum + review.rating,
+          0
+        );
+        const averageRating = totalRating / college.reviews.length;
+        return { ...college, averageRating };
+      });
+      res.json(collegesWithAverageRating);
     });
 
     // Get total number of colleges
