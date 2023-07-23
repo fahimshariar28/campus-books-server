@@ -193,14 +193,31 @@ async function run() {
 
     // Add review to a college
     app.patch("/review/:id", async (req, res) => {
-      const id = req.params.id;
-      const review = req.body;
-      const query = { _id: new ObjectId(id) };
-      const college = await collegeCollection.findOne(query);
-      const reviews = [...college.reviews, review];
-      const update = { $set: { reviews } };
-      const result = await collegeCollection.updateOne(query, update);
-      res.send(result);
+      try {
+        const id = req.params.id;
+        const review = req.body;
+        const query = { _id: new ObjectId(id) };
+
+        // Update the "college" collection
+        const college = await collegeCollection.findOne(query);
+        const reviews = [...college.reviews, review];
+        const collegeUpdate = { $set: { reviews } };
+        const result = await collegeCollection.updateOne(query, collegeUpdate);
+
+        // Update the "admission" collection
+        const admissionQuery = {
+          $and: [{ studentEmail: review.reviewer_email }, { collegeId: id }],
+        };
+        const admissionUpdate = { $set: { reviewed: true } };
+        const result2 = await admissionCollection.updateOne(
+          admissionQuery,
+          admissionUpdate
+        );
+
+        res.send({ result, result2 });
+      } catch (error) {
+        console.error("Error in update:", error);
+      }
     });
 
     // Send a ping to confirm a successful connection
