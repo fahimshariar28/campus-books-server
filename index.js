@@ -148,6 +148,20 @@ async function run() {
       res.send(result);
     });
 
+    // Get admission by email
+    app.get("/admission/:email", verifyJWT, async (req, res) => {
+      const email = req.decoded.email;
+      const studentEmail = req.params.email;
+      if (email !== studentEmail) {
+        return res
+          .status(401)
+          .send({ error: true, message: "unauthorized access" });
+      }
+      const query = { studentEmail };
+      const admissionData = await admissionCollection.find(query).toArray();
+      res.json(admissionData);
+    });
+
     // Get Graduates
     app.get("/graduates", async (req, res) => {
       const graduates = await graduateCollection.find({}).toArray();
