@@ -60,6 +60,9 @@ async function run() {
     const researchCollection = client
       .db("campus-books-collection")
       .collection("research");
+    const admissionCollection = client
+      .db("campus-books-collection")
+      .collection("admission");
 
     // Jwt Token
     app.post("/jwt", (req, res) => {
@@ -130,6 +133,19 @@ async function run() {
       );
 
       res.json(collegesWithAverageRating);
+    });
+
+    // Add admission to database
+    app.post("/admission", verifyJWT, async (req, res) => {
+      const email = req.decoded.email;
+      const admission = req.body;
+      if (email !== admission.studentEmail) {
+        return res
+          .status(401)
+          .send({ error: true, message: "unauthorized access" });
+      }
+      const result = await admissionCollection.insertOne(admission);
+      res.send(result);
     });
 
     // Get Graduates
