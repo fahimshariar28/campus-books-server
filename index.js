@@ -220,6 +220,20 @@ async function run() {
       }
     });
 
+    // Get User by email
+    app.get("/user/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const decodedEmail = req.decoded.email;
+      if (email !== decodedEmail) {
+        return res
+          .status(401)
+          .send({ error: true, message: "unauthorized access" });
+      }
+      const query = { email };
+      const user = await userCollection.findOne(query);
+      res.json(user);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
