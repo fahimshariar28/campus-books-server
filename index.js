@@ -234,6 +234,29 @@ async function run() {
       res.json(user);
     });
 
+    // Update User by email
+    app.patch("/user/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const decodedEmail = req.decoded.email;
+      if (email !== decodedEmail) {
+        return res
+          .status(401)
+          .send({ error: true, message: "unauthorized access" });
+      }
+      const query = { email };
+      const user = req.body;
+      // update name , email, phone, address. if phone and address has no filed then it will add new field
+      const userUpdate = {
+        $set: {
+          name: user.name,
+          phone: user.phone,
+          address: user.address,
+        },
+      };
+      const result = await userCollection.updateOne(query, userUpdate);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
