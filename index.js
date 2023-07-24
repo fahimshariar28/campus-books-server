@@ -261,7 +261,6 @@ async function run() {
       }
       const query = { email };
       const user = req.body;
-      // update name , email, phone, address. if phone and address has no filed then it will add new field
       const userUpdate = {
         $set: {
           name: user.name,
